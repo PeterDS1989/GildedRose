@@ -8,19 +8,19 @@ public class GildedRoseTest {
 
     @Test
     public void testNormalItems() {
-        Item item = new Item("foo", 1, 3);
+        Item item = new Item("foo", 1, 4);
         Item[] items = new Item[] {item};
         GildedRose app = new GildedRose(items);
 
         //Minus one for sell date not passed
         app.updateQuality();
         assertThat(item.sellIn).isEqualTo(0);
-        assertThat(item.quality).isEqualTo(2);
+        assertThat(item.quality).isEqualTo(3);
 
         //Minus two for sell date passed
         app.updateQuality();
         assertThat(item.sellIn).isEqualTo(-1);
-        assertThat(item.quality).isEqualTo(0);
+        assertThat(item.quality).isEqualTo(1);
 
         //Minimum of 0 quality
         app.updateQuality();
@@ -141,6 +141,34 @@ public class GildedRoseTest {
         app.updateQuality();
         assertThat(item.sellIn).isEqualTo(-2);
         assertThat(item.quality).isEqualTo(0);
+    }
+
+    @Test
+    public void testConjured() {
+        Item item = new Item("Conjured Mana Cake", 1, 8);
+        Item[] items = new Item[] {item};
+        GildedRose app = new GildedRose(items);
+
+        //Minus 2 for sell date not passed
+        app.updateQuality();
+        assertThat(item.sellIn).isEqualTo(0);
+        assertThat(item.quality).isEqualTo(6);
+
+        //Minus 4 for sell date passed
+        app.updateQuality();
+        assertThat(item.sellIn).isEqualTo(-1);
+        assertThat(item.quality).isEqualTo(2);
+
+        //Minimum of 0 quality
+        app.updateQuality();
+        assertThat(item.sellIn).isEqualTo(-2);
+        assertThat(item.quality).isEqualTo(0);
+
+        //Max limit of 50 does not apply when downgrading quality
+        item.quality = 60;
+        app.updateQuality();
+        assertThat(item.sellIn).isEqualTo(-3);
+        assertThat(item.quality).isEqualTo(56);
     }
 
 }
